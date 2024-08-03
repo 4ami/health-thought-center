@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:ht_web/business/course/repository/course_exception.dart';
 import 'package:ht_web/business/course/usecase/enroll.dart';
 import 'package:ht_web/business/course/usecase/search.dart';
 import 'package:http/http.dart' as http;
@@ -27,10 +28,13 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
 
       http.Response response = await http.get(uri, headers: _headers).timeout(
             const Duration(seconds: 10),
-            onTimeout: () => throw 'Connection Lost',
+            onTimeout: () =>
+                throw const CourseHTTPException(reason: 'Connection Lost'),
           );
 
-      if (response.statusCode != 200) throw 'Un Expeted Error';
+      if (response.statusCode != 200) {
+        throw const CourseHTTPException(reason: 'Un Expeted Error');
+      }
 
       final body = jsonDecode(response.body);
       final List<Course> courses = [];
@@ -63,16 +67,17 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
             body: jsonEncode({"_uid": uid, "_cid": cid, "price": price}),
           )
           .timeout(const Duration(seconds: 10),
-              onTimeout: () => throw 'Connection Losth');
+              onTimeout: () =>
+                  throw const CourseHTTPException(reason: 'Connection Lost'));
 
       final body = jsonDecode(response.body);
 
       if (response.statusCode != 201) {
         if (response.statusCode == 404) {
-          throw body['message'];
+          throw CourseHTTPException(reason: body['message']);
         }
 
-        throw 'Unexpected Error';
+        throw const CourseHTTPException(reason: 'Unexpected Error');
       }
 
       return body;
@@ -90,11 +95,14 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
 
       http.Response response = await http.get(uri, headers: _headers).timeout(
           const Duration(seconds: 10),
-          onTimeout: () => throw 'Connection Losth');
+          onTimeout: () =>
+              throw const CourseHTTPException(reason: 'Connection Losth'));
 
       final body = jsonDecode(response.body);
 
-      if (response.statusCode != 200) throw body['message'];
+      if (response.statusCode != 200) {
+        throw CourseHTTPException(reason: body['message']);
+      }
 
       final List<Course> courses = [];
 

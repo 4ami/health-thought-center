@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ht_web/business/course/model/course.dart';
+import 'package:ht_web/business/trainer/repository/trainer_exception.dart';
 import 'package:ht_web/business/trainer/usecase/get_trainer_courses.dart';
 import 'package:ht_web/business/trainer/usecase/new_course.dart';
 import 'package:ht_web/data/model/new_course.dart';
@@ -33,11 +34,14 @@ final class TrainerRepository implements GETTrainerCourses, AddNew {
 
       http.Response response = await http.get(uri, headers: _headers).timeout(
           const Duration(seconds: 10),
-          onTimeout: () => throw 'Connection Lost');
+          onTimeout: () =>
+              throw const TrainerHTTPException(reason: 'Connection Lost'));
 
       final body = jsonDecode(response.body);
 
-      if (response.statusCode != 200) throw body['message'];
+      if (response.statusCode != 200) {
+        throw TrainerHTTPException(reason: body['message']);
+      }
 
       final List<Course> courses = [];
       for (Map<String, dynamic> course in body) {
@@ -60,11 +64,14 @@ final class TrainerRepository implements GETTrainerCourses, AddNew {
       http.Response response = await http
           .post(uri, headers: _headers, body: course.toJSON())
           .timeout(const Duration(seconds: 10),
-              onTimeout: () => throw 'Connection Lost');
+              onTimeout: () =>
+                  throw const TrainerHTTPException(reason: 'Connection Lost'));
 
       final body = jsonDecode(response.body);
 
-      if (response.statusCode != 201) throw body['message'];
+      if (response.statusCode != 201) {
+        throw TrainerHTTPException(reason: body['message']);
+      }
 
       return body['message'];
     } catch (e) {

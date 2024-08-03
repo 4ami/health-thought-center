@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ht_web/business/course/model/course.dart';
+import 'package:ht_web/business/trainer/repository/trainer_exception.dart';
 import 'package:ht_web/business/trainer/repository/trainer_repo.dart';
 import 'package:ht_web/conf/shared/secure_storage.dart';
 import 'package:ht_web/feature/trainer/bloc/trainer_event.dart';
@@ -30,9 +31,18 @@ final class TrainerBLOC extends Bloc<TrainerEvent, TrainerState> {
             event: const TrainerRequestSuccess(),
           ),
         );
+      } on TrainerHTTPException catch (e) {
+        log('[Trainer-BLOC ERROR]: ${e.reason}');
+        emit(state.copyWith(event: TrainerException(message: e.reason)));
       } catch (e) {
         log('[Trainer-BLOC ERROR]: $e');
-        emit(state.copyWith(event: TrainerException(message: e.toString())));
+        emit(
+          state.copyWith(
+            event: const TrainerAddCourseFailed(
+              message: 'Something Goes Wrong!',
+            ),
+          ),
+        );
       }
     });
 
@@ -52,10 +62,19 @@ final class TrainerBLOC extends Bloc<TrainerEvent, TrainerState> {
             await repo.add(course: event.course, id: state.id);
 
         emit(state.copyWith(event: TrainerAddCourseSuccess(message: message)));
+      } on TrainerHTTPException catch (e) {
+        log('[Trainer-BLOC ERROR]: ${e.reason}');
+        emit(
+          state.copyWith(event: TrainerAddCourseFailed(message: e.reason)),
+        );
       } catch (e) {
         log('[Trainer-BLOC ERROR]: $e');
         emit(
-          state.copyWith(event: TrainerAddCourseFailed(message: e.toString())),
+          state.copyWith(
+            event: const TrainerAddCourseFailed(
+              message: 'Something Goes Wrong!',
+            ),
+          ),
         );
       }
     });

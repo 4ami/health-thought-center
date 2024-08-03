@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ht_web/auth/event/auth_event.dart';
 import 'package:ht_web/auth/state/auth_state.dart';
+import 'package:ht_web/business/auth/repository/auth_exception.dart';
 import 'package:ht_web/business/auth/repository/auth_repo.dart';
 import 'package:ht_web/conf/shared/secure_storage.dart';
 
@@ -27,9 +28,13 @@ class AuthBLOC extends Bloc<AuthEvent, AuthState> {
           email: res['email'],
           role: res['role'],
         ));
+      } on AuthenticationException catch (e) {
+        log('[AuthBLOC Error]: (Register).\n${e.reason}');
+        emit(state.copyWith(event: AuthException(message: e.reason)));
       } catch (e) {
         log('[AuthBLOC Error]: (Register).\n$e');
-        emit(state.copyWith(event: AuthException(message: e.toString())));
+        emit(state.copyWith(
+            event: const AuthException(message: 'Something Goes Wrong!')));
       }
     });
 
@@ -51,9 +56,13 @@ class AuthBLOC extends Bloc<AuthEvent, AuthState> {
           token: res['token'],
           refToken: res['refreshToken'],
         ));
+      } on AuthenticationException catch (e) {
+        log('[AuthBLOC Error]: (Login).\n${e.reason}');
+        emit(state.copyWith(event: AuthException(message: e.reason)));
       } catch (e) {
         log('[AuthBLOC Error]: (Login).\n$e');
-        emit(state.copyWith(event: AuthException(message: e.toString())));
+        emit(state.copyWith(
+            event: const AuthException(message: 'Something Goes Wrong!')));
       }
     });
 
@@ -69,9 +78,13 @@ class AuthBLOC extends Bloc<AuthEvent, AuthState> {
             .write(refToken: cred['refToken']!, token: token);
 
         emit(state.copyWith(token: token, event: const RefreshTokenSuccess()));
+      } on AuthenticationException catch (e) {
+        log('[AuthBLOC Error]: (Refresh Token).\n${e.reason}');
+        emit(state.copyWith(event: AuthException(message: e.reason)));
       } catch (e) {
         log('[AuthBLOC Error]: (Refresh Token).\n$e');
-        emit(state.copyWith(event: AuthException(message: e.toString())));
+        emit(state.copyWith(
+            event: const AuthException(message: 'Something Goes Wrong!')));
       }
     });
 
