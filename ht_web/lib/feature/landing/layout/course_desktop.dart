@@ -27,6 +27,16 @@ class _CourseDeskTopState extends State<CourseDeskTop> {
           const Search(),
           if (state.event is SearchSuccess)
             _heading(context, "Search Results: ${state.request}"),
+          if (state.event is SearchPending)
+            const SliverToBoxAdapter(
+              child: Center(
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
           if (state.event is SearchSuccess && state.response.isEmpty)
             _notFound(context),
           if (state.event is SearchSuccess)

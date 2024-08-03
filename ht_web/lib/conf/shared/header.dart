@@ -97,7 +97,7 @@ class _HeaderState extends State<Header> {
   void _dialog({required Widget body}) {
     context.read<AuthBLOC>().add(const AuthInintEvent());
     showDialog(
-      barrierDismissible: true,
+      barrierDismissible: false,
       context: context,
       builder: (context) => body,
     );

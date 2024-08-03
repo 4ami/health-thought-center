@@ -24,7 +24,7 @@ class AuthRepo implements Login, Register, RefreshToken {
   Future<Map<String, String>> login(
       {required String email, required pass}) async {
     try {
-      Uri uri = Uri.http(
+      Uri uri = Uri.https(
         AuthSource.instance.api,
         AuthSource.instance.signInEP,
       );
@@ -60,7 +60,7 @@ class AuthRepo implements Login, Register, RefreshToken {
     required password,
   }) async {
     try {
-      Uri uri = Uri.http(
+      Uri uri = Uri.https(
         AuthSource.instance.api,
         AuthSource.instance.signUpEP,
       );
@@ -91,7 +91,7 @@ class AuthRepo implements Login, Register, RefreshToken {
   Future<String> refreshToken({required String refreshToken}) async {
     try {
       Uri uri =
-          Uri.http(AuthSource.instance.api, AuthSource.instance.refreshTokenEP);
+          Uri.https(AuthSource.instance.api, AuthSource.instance.refreshTokenEP);
 
       http.Response response = await http
           .post(

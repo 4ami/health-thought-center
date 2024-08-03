@@ -42,6 +42,10 @@ final class SearchSuccess extends CourseEvent {
   const SearchSuccess();
 }
 
+final class SearchPending extends CourseEvent {
+  const SearchPending();
+}
+
 final class SearchFailed extends CourseEvent {
   const SearchFailed({required super.message});
 }

@@ -23,7 +23,7 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
   @override
   Future<List<Course>> getAll() async {
     try {
-      Uri uri = Uri.http(
+      Uri uri = Uri.https(
           CourseSource.instance.api, CourseSource.instance.allCoursesEP);
 
       http.Response response = await http.get(uri, headers: _headers).timeout(
@@ -58,7 +58,7 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
   }) async {
     try {
       Uri uri =
-          Uri.http(CourseSource.instance.api, CourseSource.instance.enrollEP);
+          Uri.https(CourseSource.instance.api, CourseSource.instance.enrollEP);
 
       http.Response response = await http
           .post(
@@ -90,7 +90,7 @@ final class CourseRepo implements GETAllCourses, Enroll, Search {
   @override
   Future<List<Course>> search({required String request}) async {
     try {
-      Uri uri = Uri.http(CourseSource.instance.api,
+      Uri uri = Uri.https(CourseSource.instance.api,
           CourseSource.instance.serchEP, {"query": request});
 
       http.Response response = await http.get(uri, headers: _headers).timeout(

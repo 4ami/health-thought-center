@@ -52,7 +52,14 @@ final class CourseBLOC extends Bloc<CourseEvent, CourseState> {
     on<SearchRequestChanged>((event, emit) async {
       try {
         emit(state.copyWith(
-            request: event.request, event: const CourseRequestPending()));
+            request: event.request, event: const SearchPending()));
+
+        if (event.request.isEmpty) {
+          emit(state.copyWith(
+              event: const SearchFailed(message: 'Write anything to search'),
+              response: []));
+          return;
+        }
 
         final courses = await repo.search(request: event.request);
 

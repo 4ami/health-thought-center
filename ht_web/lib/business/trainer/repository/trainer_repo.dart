@@ -27,7 +27,7 @@ final class TrainerRepository implements GETTrainerCourses, AddNew {
   @override
   Future<List<Course>> getCourses({required String id}) async {
     try {
-      Uri uri = Uri.http(
+      Uri uri = Uri.https(
         TrainerSource.instance.api,
         '${TrainerSource.instance.trainerCoursesEP}/$id',
       );
@@ -58,7 +58,7 @@ final class TrainerRepository implements GETTrainerCourses, AddNew {
   @override
   Future<String> add({required NewCourse course, required String id}) async {
     try {
-      Uri uri = Uri.http(TrainerSource.instance.api,
+      Uri uri = Uri.https(TrainerSource.instance.api,
           '${TrainerSource.instance.trainerCreateCourseEP}/$id');
 
       http.Response response = await http
